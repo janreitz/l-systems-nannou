@@ -1,9 +1,5 @@
 use nannou::prelude::*;
 
-fn main() {
-    nannou::app(model).update(update).run();
-}
-
 fn to_rad(deg: f32) -> f32 {
     PI/180.0*deg
 }  
@@ -112,4 +108,8 @@ fn view(app: &App, model: &Model, frame: Frame) {
     draw.rect().w_h(1024.0, 1024.0).color(srgba(0.0,0.0,0.0,0.1));
 
     draw.to_frame(app, &frame).unwrap();
+}
+
+fn main() {
+    nannou::app(model).update(update).run();
 }
