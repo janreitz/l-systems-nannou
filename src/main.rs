@@ -86,8 +86,8 @@ struct Model {
 fn model(app: &App) -> Model {
     let _window = app.new_window().size(1024,1024).view(view).build().unwrap();
     let node = Node::new(
-        vec2(0.0, 0.0),
-        vec2(0.0, 0.0),
+        vec2(0.0, -512.0),
+        vec2(0.0, -502.0),
         // vec2(1024.0/2.0, 1024.0),
         // vec2(1024.0/2.0, 1014.0),
     );
@@ -109,7 +109,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
     draw.background().color(BLACK);
     
     model.node.draw(&draw);
-    // draw.rect().w_h(1024.0, 1024.0).color(srgba(0.0,0.0,0.0,0.1));
+    draw.rect().w_h(1024.0, 1024.0).color(srgba(0.0,0.0,0.0,0.1));
 
     draw.to_frame(app, &frame).unwrap();
 }
