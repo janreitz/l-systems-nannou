@@ -8,3 +8,7 @@ edition = "2018"
 
 [dependencies]
 nannou = "0.15"
+
+[[example]]
+name = "basic"
+path = "src/basic.rs"
