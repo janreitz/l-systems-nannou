@@ -20,3 +20,7 @@ path = "src/algae.rs"
 [[example]]
 name = "fractal_tree"
 path = "src/fractal_tree.rs"
+
+[[example]]
+name = "fractal_plant"
+path = "src/fractal_plant.rs"
