@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub fn produce(axiom: &str, rules: &HashMap<&str, &str>) -> String {
+pub fn produce(axiom: &str, rules: &HashMap<String, String>) -> String {
     let mut s = String::new();
 
     for var in axiom.chars() {

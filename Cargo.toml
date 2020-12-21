@@ -16,3 +16,11 @@ path = "src/basic.rs"
 [[example]]
 name = "algae"
 path = "src/algae.rs"
+
+[[example]]
+name = "fractal_tree"
+path = "src/fractal_tree.rs"
+
+[[example]]
+name = "turtle"
+path = "src/turtle.rs"
