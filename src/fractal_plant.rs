@@ -15,7 +15,7 @@ pub fn render_turtle(draw: &Draw, path: &str) {
         position: vec2(0.0, -512.0),
         orientation: 0.0,
         thickness: 2.0,
-        color: GREEN,
+        color: FORESTGREEN,
         stack: Vec::new(),
     };
 
@@ -79,7 +79,7 @@ fn update(_app: &App, _model: &mut Model, _update: Update) {
 fn view(app: &App, model: &Model, frame: Frame) {
     let draw = app.draw();
     
-    draw.background().color(BLACK);
+    draw.background().color(WHITE);
 
     let mut path_substring = String::new();
 
