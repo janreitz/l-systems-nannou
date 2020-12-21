@@ -12,3 +12,7 @@ nannou = "0.15"
 [[example]]
 name = "basic"
 path = "src/basic.rs"
+
+[[example]]
+name = "algae"
+path = "src/algae.rs"
