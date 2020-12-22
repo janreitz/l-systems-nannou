@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 nannou = "0.15"
+rand = "0.8"
 
 [[example]]
 name = "basic"
@@ -24,3 +25,7 @@ path = "src/fractal_tree.rs"
 [[example]]
 name = "fractal_plant"
 path = "src/fractal_plant.rs"
+
+[[example]]
+name = "stochastic_plant"
+path = "src/stochastic_plant.rs"
