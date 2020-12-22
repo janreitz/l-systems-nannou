@@ -14,7 +14,7 @@ pub fn render_turtle(draw: &Draw, path: &str) {
     let mut turtle = Turtle{
         position: vec2(0.0, -512.0),
         orientation: 0.0,
-        thickness: 2.0,
+        thickness: 5.0,
         color: FORESTGREEN,
         stack: Vec::new(),
     };
@@ -51,8 +51,8 @@ pub fn render_turtle(draw: &Draw, path: &str) {
 struct Model {
     axiom: String,
     path: String,
-    iteration_count: i32,
-    rules: HashMap<String, Vec<(f32, String)>>
+    rules: HashMap<String, Vec<(f32, String)>>,
+    iteration_count: u32,
 }
 
 fn model(app: &App) -> Model {
@@ -74,13 +74,13 @@ fn model(app: &App) -> Model {
     Model { 
         axiom: axiom.clone(),
         path: axiom,
-        iteration_count: 0,
         rules: stochastic_production_rules,
+        iteration_count: 0,
     }
 }
 
 fn update(app: &App, model: &mut Model, _update: Update) {
-    if app.elapsed_frames() % 30 == 0 {
+    if app.elapsed_frames() % 15 == 0 {
         if model.iteration_count == 7 {
             // Reset the plant
             model.iteration_count = 0;
@@ -103,10 +103,8 @@ fn view(app: &App, model: &Model, frame: Frame) {
     draw.text(&app.fps().to_string()).x_y(-500.0, 500.0).color(FORESTGREEN);
     draw.to_frame(app, &frame).unwrap();
 
-    if app.elapsed_frames() % 30 == 0 {
-        let file_path = captured_frame_path(app, &frame);
-        app.main_window().capture_frame(file_path);
-    }
+    let file_path = captured_frame_path(app, &frame);
+    app.main_window().capture_frame(file_path);
 }
 
 fn main() {
@@ -121,7 +119,7 @@ fn captured_frame_path(app: &App, frame: &Frame) -> std::path::PathBuf {
         .join("captures")
         .join(app.exe_name().unwrap())
         // Name each file after the number of the frame.
-        .join(format!("{:03}", frame.nth()))
+        .join(format!("img{:04}", frame.nth()))
         // The extension will be PNG. We also support tiff, bmp, gif, jpeg, webp and some others.
         .with_extension("png")
 }
