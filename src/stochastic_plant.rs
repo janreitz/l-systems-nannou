@@ -6,10 +6,6 @@ pub use crate::l_system::produce_stochastic;
 mod turtle;
 pub use crate::turtle::Turtle;
 
-fn to_rad(deg: f32) -> f32 {
-    PI/180.0*deg
-}  
-
 pub fn render_turtle(draw: &Draw, path: &str) {
     let mut turtle = Turtle{
         position: vec2(0.0, -512.0),
@@ -27,10 +23,10 @@ pub fn render_turtle(draw: &Draw, path: &str) {
                 turtle.forward(draw, 50.0 * scaling);
             }
             "b" => {
-                turtle.turn(to_rad(25.0));
+                turtle.turn(deg_to_rad(25.0));
             }
             "c" => {
-                turtle.turn(to_rad(-25.0));
+                turtle.turn(deg_to_rad(-25.0));
             }
             "d" => {
                 // do nothing
