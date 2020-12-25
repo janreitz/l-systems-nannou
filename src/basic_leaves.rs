@@ -149,7 +149,7 @@ fn model(app: &App) -> Model {
     Model { 
         node: Node::new(
             vec2(0.0, -512.0),
-            vec2(0.0, -502.0),
+            vec2(0.0, -507.0),
         )
     }
 }
