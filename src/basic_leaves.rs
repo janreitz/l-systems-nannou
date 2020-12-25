@@ -71,7 +71,7 @@ impl Node {
         // Grow leaves
         let mut rng = rand::thread_rng();
         // The thinner the branch the more leaves it has
-        let num_leaves = (rng.gen::<f32>() * 10.0 / self.thickness) as i32;
+        let num_leaves = (rng.gen::<f32>() * 15.0 / self.thickness) as i32;
         let leave_diff = num_leaves - self.leaves.len() as i32; 
 
         if leave_diff < 0 {
