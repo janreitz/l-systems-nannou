@@ -21,13 +21,13 @@ pub fn produce(axiom: &str, rules: &HashMap<String, String>) -> String {
 
 pub fn produce_stochastic(axiom: &str, rules: &HashMap<String, Vec<(f32, String)>>) -> String {
     let mut s = String::new();
+    let mut rng = rand::thread_rng();
 
     for var in axiom.chars() {
         match rules.get::<str>(&var.to_string()) {
             Some(choices) => {
                 // Variables are subsituted according to a production rule 
                 // randomly chosen from the given choices
-                let mut rng = rand::thread_rng();
                 let random_val: f32 = rng.gen(); 
                 let mut total_prob = 0.0;
                 for (prob, string) in choices {
