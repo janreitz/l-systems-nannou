@@ -170,8 +170,8 @@ fn view(app: &App, model: &Model, frame: Frame) {
         .color(BLACK);
 
     draw.to_frame(app, &frame).unwrap();
-        let file_path = captured_frame_path(app, &frame);
-    app.main_window().capture_frame(file_path);
+    // let file_path = captured_frame_path(app, &frame);
+    // app.main_window().capture_frame(file_path);
 }
 
 fn main() {

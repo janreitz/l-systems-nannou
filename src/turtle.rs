@@ -1,12 +1,14 @@
+use std::ops::Mul;
+
 // use std::collections::HashMap;
-use nannou::prelude::*;
+use nannou::{math::{Deg, Euler, Quaternion}, prelude::*};
 
 pub struct Turtle {
-    pub position: Vector2,
-    pub orientation: f32, // 12:00 -> 0 03:00 -> PI/4
+    pub position: Vector3,
+    pub orientation: Vector3, // around x, y, z
     pub thickness: f32,
     pub color: Rgb8,
-    pub stack: Vec<(Vector2, f32)>,
+    pub stack: Vec<(Vector3, Vector3)>,
     pub turn_reversed: bool,
     pub turn_angle: f32,
     pub line_length: f32,
@@ -15,8 +17,8 @@ pub struct Turtle {
 impl Default for Turtle {
     fn default() -> Turtle {
         Turtle{
-            position: vec2(0.0, -512.0),
-            orientation: 0.0,
+            position: vec3(0.0, 0.0, 0.0),
+            orientation: Vector3::unit_y(),
             thickness: 2.0,
             color: FORESTGREEN,
             stack: Vec::new(),
@@ -29,14 +31,11 @@ impl Default for Turtle {
 
 impl Turtle {
     pub fn forward(& mut self, draw: &Draw, dist: f32) {
-        let new_position = self.position + vec2(
-            dist * self.orientation.sin(),
-            dist * self.orientation.cos(),
-        );
-
+        let new_position = self.position + self.orientation.mul(dist);
+        
         draw.line()
-            .start(self.position)
-            .end(new_position)
+            .start(vec2(self.position.x, self.position.y))
+            .end(vec2(new_position.x, new_position.y))
             .weight(self.thickness)
             .color(self.color);
 
@@ -50,20 +49,39 @@ impl Turtle {
     }
 
     pub fn forward_no_draw(& mut self, dist: f32) {
-        let new_position = self.position + vec2(
-            dist * self.orientation.sin(),
-            dist * self.orientation.cos(),
-        );
-
-        self.position = new_position;
+        self.position += self.orientation.mul(dist);
     }
 
-    pub fn turn(& mut self, rad: f32) {
+    pub fn turn(& mut self, mut deg: f32) {
         if self.turn_reversed {
-            self.orientation = self.orientation - rad;
-        } else {
-            self.orientation = self.orientation + rad;
+            deg = -deg;
         }
+        self.rotate(0.0, 0.0, deg);
+    }
+    
+    pub fn turn_x(& mut self, mut deg: f32) {
+        if self.turn_reversed {
+            deg = -deg;
+        }
+        self.rotate(deg, 0.0, 0.0);
+    }
+    
+    pub fn turn_y(& mut self, mut deg: f32) {
+        if self.turn_reversed {
+            deg = -deg;
+        }
+        self.rotate(0.0, deg, 0.0);
+    }
+
+    fn rotate(& mut self, x: f32, y: f32, z: f32)
+    {
+        let rotation = Quaternion::from(Euler {
+            x: Deg(x),
+            y: Deg(y),
+            z: Deg(z),
+        });
+
+        self.orientation = rotation.rotate_vector(self.orientation.into()).into();
     }
 
     pub fn push(&mut self) {

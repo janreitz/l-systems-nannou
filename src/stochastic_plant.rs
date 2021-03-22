@@ -8,8 +8,8 @@ pub use crate::turtle::Turtle;
 
 pub fn render_turtle(draw: &Draw, path: &str) {
     let mut turtle = Turtle{
-        position: vec2(0.0, -512.0),
-        orientation: 0.0,
+        position: vec3(0.0, -512.0, 0.0),
+        orientation: vec3(0.0, 1.0, 0.0),
         thickness: 5.0,
         color: FORESTGREEN,
         stack: Vec::new(),
