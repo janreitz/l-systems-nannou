@@ -15,8 +15,7 @@ pub fn render_turtle(draw: &Draw, path: &str) {
         position: vec2(0.0, -512.0),
         orientation: 0.0,
         thickness: 2.0,
-        color: FORESTGREEN,
-        stack: Vec::new(),
+        .. Turtle::default()
     };
 
     let scaling = 1.0;

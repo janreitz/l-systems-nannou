@@ -12,7 +12,7 @@ pub fn render_turtle(draw: &Draw, path: &str) {
         orientation: 0.0,
         thickness: 5.0,
         color: STEELBLUE,
-        stack: Vec::new(),
+        .. Turtle::default()
     };
 
     let scaling = 10.0/(path.len() as f32).sqrt();

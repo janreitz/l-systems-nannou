@@ -13,6 +13,7 @@ pub fn render_turtle(draw: &Draw, path: &str) {
         thickness: 5.0,
         color: FORESTGREEN,
         stack: Vec::new(),
+        .. Turtle::default()
     };
 
     let scaling = 1.0;
@@ -99,8 +100,8 @@ fn view(app: &App, model: &Model, frame: Frame) {
     draw.text(&app.fps().to_string()).x_y(-500.0, 500.0).color(FORESTGREEN);
     draw.to_frame(app, &frame).unwrap();
 
-    let file_path = captured_frame_path(app, &frame);
-    app.main_window().capture_frame(file_path);
+    // let file_path = captured_frame_path(app, &frame);
+    // app.main_window().capture_frame(file_path);
 }
 
 fn main() {
