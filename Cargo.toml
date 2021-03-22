@@ -33,3 +33,7 @@ path = "src/fractal_plant.rs"
 [[example]]
 name = "stochastic_plant"
 path = "src/stochastic_plant.rs"
+
+[[example]]
+name = "new"
+path = "src/new.rs"
