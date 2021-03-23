@@ -112,6 +112,7 @@ struct Model {
     production: String,
     rotation: f32,
     capture_image: bool,
+    hide_ui: bool,
 }
 
 widget_ids! {
@@ -122,9 +123,42 @@ widget_ids! {
     }
 }
 
+fn window_event(_app: &App, model: &mut Model, event: WindowEvent) {
+    match event {
+        KeyPressed(key) => {
+            match key {
+                Key::H => { model.hide_ui = !model.hide_ui; }
+                _ => {}
+            }
+        }
+        KeyReleased(_key) => {}
+        MouseMoved(_pos) => {}
+        MousePressed(_button) => {}
+        MouseReleased(_button) => {}
+        MouseEntered => {}
+        MouseExited => {}
+        MouseWheel(_amount, _phase) => {}
+        Moved(_pos) => {}
+        Resized(_size) => {}
+        Touch(_touch) => {}
+        TouchPressure(_pressure) => {}
+        HoveredFile(_path) => {}
+        DroppedFile(_path) => {}
+        HoveredFileCancelled => {}
+        Focused => {}
+        Unfocused => {}
+        Closed => {}
+    }
+}
+
 
 fn model(app: &App) -> Model {
-    let _window = app.new_window().size(1024,1024).view(view).build().unwrap();
+    let _window = app.new_window()
+        .size(1024,1024)
+        .view(view)
+        .event(window_event)
+        .build()
+        .unwrap();
 
     // Create the UI.
     let mut ui = app.new_ui().build().unwrap();
@@ -150,6 +184,7 @@ fn model(app: &App) -> Model {
         production,
         rotation: 0.0,
         capture_image: false,
+        hide_ui: false,
     }
 }
 
@@ -180,7 +215,7 @@ fn update(_app: &App, model: &mut Model, _update: Update) {
     for _click in widget::Button::new()
         .down(10.0)
         .w_h(200.0, 30.0)
-        .label("Export")
+        .label("Capture")
         .label_font_size(15)
         .rgb(0.3, 0.3, 0.3)
         .label_rgb(1.0, 1.0, 1.0)
@@ -228,7 +263,9 @@ fn view(app: &App, model: &Model, frame: Frame) {
         app.main_window().capture_frame(file_path);
     }
     
-    model.ui.draw_to_frame(app, &frame).unwrap();
+    if !model.hide_ui {
+        model.ui.draw_to_frame(app, &frame).unwrap();
+    }
 }
 
 fn main() {
