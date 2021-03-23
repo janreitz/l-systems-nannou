@@ -6,7 +6,7 @@ pub use crate::l_system::produce_stochastic;
 mod turtle;
 pub use crate::turtle::Turtle;
 mod capture;
-pub use crate::capture::captured_frame_path;
+pub use crate::capture::capture_path_frame_count;
 
 
 pub fn render_turtle(draw: &Draw, path: &str) {
@@ -103,7 +103,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
     draw.text(&app.fps().to_string()).x_y(-500.0, 500.0).color(FORESTGREEN);
     draw.to_frame(app, &frame).unwrap();
 
-    let file_path = captured_frame_path(app, &frame);
+    let file_path = capture_path_frame_count(app, &frame);
     app.main_window().capture_frame(file_path);
 }
 

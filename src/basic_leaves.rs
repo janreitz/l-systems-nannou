@@ -3,7 +3,7 @@ use nannou::geom::Vector2;
 use nannou::color::*;
 use rand::Rng;
 mod capture;
-use crate::capture::captured_frame_path;
+use crate::capture::capture_path_frame_count;
 
 struct Leaf {
     position: f32,
