@@ -7,10 +7,13 @@ use crate::capture::{
     capture_path_timestamp
 };
 
-use nannou::{prelude::*, ui::widget::Slider};
-use nannou::ui::prelude::*;
-
-
+use nannou::{
+    math::Deg, 
+    prelude::*, 
+    ui::{
+        prelude::*,
+        widget::Slider
+    }};
 
 fn main() {
     nannou::app(model).update(update).run();
@@ -78,11 +81,6 @@ fn model(app: &App) -> Model {
     let mut ui = app.new_ui().build().unwrap();
     // Generate some ids for our widgets.
     let ids = Ids::new(ui.widget_id_generator());
-
-    // 3d tree
-    // let axiom = String::from("FFFA");
-    // let mut production_rules = HashMap::new();
-    // production_rules.insert(String::from("A"), String::from("°[^/FFFA]////[^/FFFA]////[^/FFFA]"));
 
     let l_system = fractal_plant();
 
@@ -175,14 +173,14 @@ fn view(app: &App, model: &Model, frame: Frame) {
         position: vec3(
             app.window_rect().mid_bottom().x, 
             app.window_rect().bottom(),
-            0.0),
-        orientation: vec3(0.0, 1.0, 0.0),
+            0.0).into(),
         thickness: 2.0,
         color: FORESTGREEN,
         stack: Vec::new(),
-        turn_angle: model.turn_angle,
+        turn_angle: Deg(model.turn_angle),
         turn_reversed: false,
         line_length: 10.0,
+        .. Turtle::default()
     };
 
     render_turtle(&draw, &model.production, turtle, model.scale);
@@ -198,7 +196,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
 }
 
 pub fn render_turtle(draw: &Draw, path: &str, mut turtle: Turtle, scaling: f32) {
-    let turning_angle_increment = 5.0;
+    let turning_angle_increment = Deg(5.0);
     let line_length_scaling_factor = 1.5;
 
     for c in path.chars() {
@@ -213,15 +211,15 @@ pub fn render_turtle(draw: &Draw, path: &str, mut turtle: Turtle, scaling: f32) 
             }
             // Turn left by turning angle
             "+" => {
-                turtle.turn(-turtle.turn_angle);
+                turtle.yaw(-turtle.turn_angle);
             }
             // Turn right by turning angle
             "-" => {
-                turtle.turn(turtle.turn_angle);
+                turtle.yaw(turtle.turn_angle);
             }
             // Reverse direction (ie: turn by 180 degrees)
             "|" => {
-                turtle.turn(180.0);
+                turtle.yaw(Deg(180.0));
             }
             // Push current drawing state onto stack
             "[" => {
@@ -269,11 +267,11 @@ pub fn render_turtle(draw: &Draw, path: &str, mut turtle: Turtle, scaling: f32) 
             }
             // Pitch upwards
             "^" => {
-                turtle.turn_x(turtle.turn_angle);
+                turtle.roll(turtle.turn_angle);
             } 
             // Roll counterclockwise
             "/" => {
-                turtle.turn_y(turtle.turn_angle);
+                turtle.pitch(turtle.turn_angle);
             }
             // Scale linelength
             "°" => {

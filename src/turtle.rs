@@ -1,28 +1,39 @@
 use std::ops::Mul;
 
 // use std::collections::HashMap;
-use nannou::{math::{Deg, Euler, Quaternion}, prelude::*};
+use nannou::{
+    math::{
+        Matrix3, 
+        Deg, 
+        cgmath::Vector3,
+    }, 
+    prelude::*
+};
 
 pub struct Turtle {
-    pub position: Vector3,
-    pub orientation: Vector3, // around x, y, z
+    pub position: Vector3<f32>,
+    pub orientation: Matrix3<f32>,
     pub thickness: f32,
     pub color: Rgb8,
-    pub stack: Vec<(Vector3, Vector3)>,
+    pub stack: Vec<(Vector3<f32>, Matrix3<f32>)>,
     pub turn_reversed: bool,
-    pub turn_angle: f32,
+    pub turn_angle: Deg<f32>,
     pub line_length: f32,
 }
 
 impl Default for Turtle {
     fn default() -> Turtle {
         Turtle{
-            position: vec3(0.0, 0.0, 0.0),
-            orientation: Vector3::unit_y(),
+            position: vec3(0.0, 0.0, 0.0).into(),
+            orientation: Matrix3::from_cols(
+                Vector3::unit_x().into(),
+                Vector3::unit_y().into(),
+                Vector3::unit_z().into()
+            ),
             thickness: 2.0,
             color: FORESTGREEN,
             stack: Vec::new(),
-            turn_angle: PI/180.0*25.0,
+            turn_angle: Deg(25.0),
             turn_reversed: false,
             line_length: 1.0,
         }
@@ -31,7 +42,7 @@ impl Default for Turtle {
 
 impl Turtle {
     pub fn forward(& mut self, draw: &Draw, dist: f32) {
-        let new_position = self.position + self.orientation.mul(dist);
+        let new_position = self.position + self.orientation.x.mul(dist);
         
         draw.line()
             .start(vec2(self.position.x, self.position.y))
@@ -49,39 +60,45 @@ impl Turtle {
     }
 
     pub fn forward_no_draw(& mut self, dist: f32) {
-        self.position += self.orientation.mul(dist);
-    }
-
-    pub fn turn(& mut self, mut deg: f32) {
-        if self.turn_reversed {
-            deg = -deg;
-        }
-        self.rotate(0.0, 0.0, deg);
+        self.position += self.orientation.x.mul(dist);
     }
     
-    pub fn turn_x(& mut self, mut deg: f32) {
+
+    pub fn yaw(& mut self, mut deg: Deg<f32>) {
         if self.turn_reversed {
             deg = -deg;
         }
-        self.rotate(deg, 0.0, 0.0);
+
+        let rotation = Matrix3::from_axis_angle(
+            self.orientation.z,
+            deg
+        );
+
+        self.orientation = rotation * self.orientation;
     }
     
-    pub fn turn_y(& mut self, mut deg: f32) {
+    pub fn roll(& mut self, mut deg: Deg<f32>) {
         if self.turn_reversed {
             deg = -deg;
         }
-        self.rotate(0.0, deg, 0.0);
+        let rotation = Matrix3::from_axis_angle(
+            self.orientation.x,
+            deg
+        );
+    
+        self.orientation = rotation * self.orientation;
     }
-
-    fn rotate(& mut self, x: f32, y: f32, z: f32)
-    {
-        let rotation = Quaternion::from(Euler {
-            x: Deg(x),
-            y: Deg(y),
-            z: Deg(z),
-        });
-
-        self.orientation = rotation.rotate_vector(self.orientation.into()).into();
+    
+    pub fn pitch(& mut self, mut deg: Deg<f32>) {
+        if self.turn_reversed {
+            deg = -deg;
+        }
+        let rotation = Matrix3::from_axis_angle(
+            self.orientation.y,
+            deg
+        );
+    
+        self.orientation = rotation * self.orientation;
     }
 
     pub fn push(&mut self) {
