@@ -23,7 +23,9 @@ struct Model {
     ui: Ui,
     ids: Ids,
     turn_angle: f32,
-    rotation: f32,
+    roll: f32,
+    pitch: f32,
+    yaw: f32,
     scale: f32,
     production: String,
     capture_image: bool,
@@ -33,7 +35,9 @@ struct Model {
 widget_ids! {
     struct Ids {
         turn_angle,
-        rotation,
+        roll,
+        pitch,
+        yaw,
         scale,
         capture_image,
     }
@@ -82,10 +86,10 @@ fn model(app: &App) -> Model {
     // Generate some ids for our widgets.
     let ids = Ids::new(ui.widget_id_generator());
 
-    let l_system = fractal_plant();
+    let l_system = tree_3d();
 
     let mut production = l_system.axiom.clone();
-    for _ in 0..6 {
+    for _ in 0..3 {
         production = produce(&production, &l_system.production_rules)
     }
 
@@ -93,7 +97,9 @@ fn model(app: &App) -> Model {
         ui,
         ids,
         turn_angle: l_system.angle,
-        rotation: 0.0,
+        roll: 0.0,
+        pitch: 0.0,
+        yaw: 0.0,
         scale: 1.0,
         production,
         capture_image: false,
@@ -115,13 +121,23 @@ fn update(app: &App, model: &mut Model, _update: Update) {
 
     let angle_slider = slider(model.turn_angle, 0.0, 90.0)
         .top_left_with_margin(20.0)
-        .label("Turn Angle")
+        .label("Branch Angle")
         .set(model.ids.turn_angle, ui);
 
-    let rotation_slider = slider(0.0, 0.0, 360.0)
+    let roll_slider = slider(0.0, 0.0, 360.0)
         .down(10.0)
-        .label("Rotation")
-        .set(model.ids.rotation, ui);
+        .label("Roll")
+        .set(model.ids.roll, ui);
+    
+    let pitch_slider = slider(0.0, 0.0, 360.0)
+        .down(10.0)
+        .label("Pitch")
+        .set(model.ids.pitch, ui);
+    
+    let yaw_slider = slider(0.0, 0.0, 360.0)
+        .down(10.0)
+        .label("Yaw")
+        .set(model.ids.yaw, ui);
     
     let scale_slider = slider(model.scale, 0.0, 5.0)
         .down(10.0)
@@ -146,10 +162,9 @@ fn update(app: &App, model: &mut Model, _update: Update) {
         model.turn_angle = value;
     }
 
-    for value in rotation_slider
-    {
-        model.rotation = value;
-    }
+    for value in roll_slider { model.roll = value; }
+    for value in pitch_slider { model.pitch = value; }
+    for value in yaw_slider { model.yaw = value; }
 
     for value in scale_slider
     {
@@ -169,10 +184,10 @@ fn view(app: &App, model: &Model, frame: Frame) {
     
     draw.background().color(WHITE);
 
-    let turtle = Turtle{
+    let mut turtle = Turtle{
         position: vec3(
-            app.window_rect().mid_bottom().x, 
-            app.window_rect().bottom(),
+            0.0,//app.window_rect().mid_bottom().x, 
+            0.0, //app.window_rect().bottom(),
             0.0).into(),
         thickness: 2.0,
         color: FORESTGREEN,
@@ -182,6 +197,10 @@ fn view(app: &App, model: &Model, frame: Frame) {
         line_length: 10.0,
         .. Turtle::default()
     };
+
+    turtle.roll(Deg(model.roll));
+    turtle.pitch(Deg(model.pitch));
+    turtle.yaw(Deg(model.yaw));
 
     render_turtle(&draw, &model.production, turtle, model.scale);
     draw.to_frame(app, &frame).unwrap();
@@ -267,15 +286,15 @@ pub fn render_turtle(draw: &Draw, path: &str, mut turtle: Turtle, scaling: f32) 
             }
             // Pitch upwards
             "^" => {
-                turtle.roll(turtle.turn_angle);
+                turtle.pitch(turtle.turn_angle);
             } 
             // Roll counterclockwise
             "/" => {
-                turtle.pitch(turtle.turn_angle);
+                turtle.roll(turtle.turn_angle);
             }
             // Scale linelength
             "°" => {
-                //turtle.line_length *= 0.9;
+                turtle.line_length *= 0.9;
             }
             // X does not correspond to any drawing action and is used to control the evolution of the curve. 
             "X" => {}

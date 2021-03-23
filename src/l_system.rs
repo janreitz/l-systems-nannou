@@ -125,3 +125,15 @@ pub fn hexagonal_gosper() -> LSystem {
         angle: 60.0,
     }
 }
+
+pub fn tree_3d() -> LSystem {
+    let mut production_rules = HashMap::new();
+    production_rules.insert(String::from("A"), String::from("[^FFFA]////[^FFFA]////[^FFFA]"));
+
+    LSystem {
+        axiom: String::from("FFFA"),
+        production_rules,
+        angle: 60.0,
+    }
+}
+
