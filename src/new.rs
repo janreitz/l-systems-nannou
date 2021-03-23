@@ -19,29 +19,6 @@ fn main() {
     nannou::app(model).update(update).run();
 }
 
-struct Model {
-    ui: Ui,
-    ids: Ids,
-    turn_angle: f32,
-    roll: f32,
-    pitch: f32,
-    yaw: f32,
-    scale: f32,
-    production: String,
-    capture_image: bool,
-    hide_ui: bool,
-}
-
-widget_ids! {
-    struct Ids {
-        turn_angle,
-        roll,
-        pitch,
-        yaw,
-        scale,
-        capture_image,
-    }
-}
 
 fn window_event(_app: &App, model: &mut Model, event: WindowEvent) {
     match event {
@@ -72,14 +49,40 @@ fn window_event(_app: &App, model: &mut Model, event: WindowEvent) {
     }
 }
 
+struct Model {
+    ui: Ui,
+    ids: Ids,
+    turn_angle: f32,
+    roll: f32,
+    pitch: f32,
+    yaw: f32,
+    scale: f32,
+    l_system: LSystem,
+    iterations: i32,
+    production: String,
+    capture_image: bool,
+    hide_ui: bool,
+}
+
+widget_ids! {
+    struct Ids {
+        turn_angle,
+        roll,
+        pitch,
+        yaw,
+        scale,
+        capture_image,
+        iterations,
+    }
+}
 
 fn model(app: &App) -> Model {
     let _window = app.new_window()
-        .size(1024,1024)
-        .view(view)
-        .event(window_event)
-        .build()
-        .unwrap();
+    .size(1024,1024)
+    .view(view)
+    .event(window_event)
+    .build()
+    .unwrap();
 
     // Create the UI.
     let mut ui = app.new_ui().build().unwrap();
@@ -97,11 +100,13 @@ fn model(app: &App) -> Model {
         ui,
         ids,
         turn_angle: l_system.angle,
+        iterations: 4,
         roll: 0.0,
         pitch: 0.0,
         yaw: 0.0,
         scale: 1.0,
         production,
+        l_system,
         capture_image: false,
         hide_ui: false,
     }
@@ -144,6 +149,16 @@ fn update(app: &App, model: &mut Model, _update: Update) {
         .label("Scale")
         .set(model.ids.scale, ui);
 
+    let iterations_slider = widget::Slider::new(model.iterations as f32, 0.0, 10.0)
+        .w_h(200.0, 30.0)
+        .label_font_size(15)
+        .label_rgb(1.0, 1.0, 1.0)
+        .rgb(0.3, 0.3, 0.3)
+        .border(0.0)    
+        .down(10.0)
+        .label("Iterations")
+        .set(model.ids.iterations, ui);
+
     for _click in widget::Button::new()
         .down(10.0)
         .w_h(200.0, 30.0)
@@ -152,23 +167,22 @@ fn update(app: &App, model: &mut Model, _update: Update) {
         .rgb(0.3, 0.3, 0.3)
         .label_rgb(1.0, 1.0, 1.0)
         .border(0.0)
-        .set(model.ids.capture_image, ui)
-    {
+        .set(model.ids.capture_image, ui) {
         model.capture_image = true;
     }
-
-    for value in angle_slider
-    {
-        model.turn_angle = value;
-    }
-
+        
+    for value in angle_slider { model.turn_angle = value; }
     for value in roll_slider { model.roll = value; }
     for value in pitch_slider { model.pitch = value; }
     for value in yaw_slider { model.yaw = value; }
-
-    for value in scale_slider
-    {
-        model.scale = value;
+    for value in scale_slider { model.scale = value; }
+    for value in iterations_slider { 
+        model.iterations = value as i32; 
+        let mut production = model.l_system.axiom.clone();
+        for _ in 0..value as i32 {
+            production = produce(&production, &model.l_system.production_rules)
+        }
+        model.production = production;
     }
 
     if model.capture_image {
