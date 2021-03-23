@@ -1,14 +1,7 @@
 use std::ops::Mul;
 
 // use std::collections::HashMap;
-use nannou::{
-    math::{
-        Matrix3, 
-        Deg, 
-        cgmath::Vector3,
-    }, 
-    prelude::*
-};
+use nannou::{math::{Deg, Matrix3, Quaternion, cgmath::Vector3}, prelude::*};
 
 pub struct Turtle {
     pub position: Vector3<f32>,
@@ -26,8 +19,8 @@ impl Default for Turtle {
         Turtle{
             position: vec3(0.0, 0.0, 0.0).into(),
             orientation: Matrix3::from_cols(
-                Vector3::unit_x().into(),
                 Vector3::unit_y().into(),
+                Vector3::unit_x().into(),
                 Vector3::unit_z().into()
             ),
             thickness: 2.0,
@@ -69,36 +62,41 @@ impl Turtle {
             deg = -deg;
         }
 
-        let rotation = Matrix3::from_axis_angle(
+        let rotation = Quaternion::from_axis_angle(
             self.orientation.z,
-            deg
+            deg,
         );
 
-        self.orientation = rotation * self.orientation;
+        self.orientation.x = rotation.rotate_vector(self.orientation.x);
+        self.orientation.y = rotation.rotate_vector(self.orientation.y);
     }
     
     pub fn roll(& mut self, mut deg: Deg<f32>) {
         if self.turn_reversed {
             deg = -deg;
         }
-        let rotation = Matrix3::from_axis_angle(
+
+        let rotation = Quaternion::from_axis_angle(
             self.orientation.x,
-            deg
+            deg,
         );
-    
-        self.orientation = rotation * self.orientation;
+
+        self.orientation.y = rotation.rotate_vector(self.orientation.y);
+        self.orientation.z = rotation.rotate_vector(self.orientation.z);
     }
     
     pub fn pitch(& mut self, mut deg: Deg<f32>) {
         if self.turn_reversed {
             deg = -deg;
         }
-        let rotation = Matrix3::from_axis_angle(
+
+        let rotation = Quaternion::from_axis_angle(
             self.orientation.y,
-            deg
+            deg,
         );
-    
-        self.orientation = rotation * self.orientation;
+
+        self.orientation.x = rotation.rotate_vector(self.orientation.x);
+        self.orientation.z = rotation.rotate_vector(self.orientation.z);
     }
 
     pub fn push(&mut self) {
