@@ -5,6 +5,9 @@ mod l_system;
 pub use crate::l_system::produce_stochastic;
 mod turtle;
 pub use crate::turtle::Turtle;
+mod capture;
+pub use crate::capture::captured_frame_path;
+
 
 pub fn render_turtle(draw: &Draw, path: &str) {
     let mut turtle = Turtle{
@@ -100,23 +103,10 @@ fn view(app: &App, model: &Model, frame: Frame) {
     draw.text(&app.fps().to_string()).x_y(-500.0, 500.0).color(FORESTGREEN);
     draw.to_frame(app, &frame).unwrap();
 
-    // let file_path = captured_frame_path(app, &frame);
-    // app.main_window().capture_frame(file_path);
+    let file_path = captured_frame_path(app, &frame);
+    app.main_window().capture_frame(file_path);
 }
 
 fn main() {
     nannou::app(model).update(update).run();
-}
-
-fn captured_frame_path(app: &App, frame: &Frame) -> std::path::PathBuf {
-    // Create a path that we want to save this frame to.
-    app.project_path()
-        .expect("failed to locate `project_path`")
-        // Capture all frames to a directory called `/<path_to_project>/captures/<source_name>`.
-        .join("captures")
-        .join(app.exe_name().unwrap())
-        // Name each file after the number of the frame.
-        .join(format!("img{:04}", frame.nth()))
-        // The extension will be PNG. We also support tiff, bmp, gif, jpeg, webp and some others.
-        .with_extension("png")
 }
