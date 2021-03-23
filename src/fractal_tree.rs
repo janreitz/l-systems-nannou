@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use nannou::prelude::*;
+use nannou::math::Deg;
 
 mod l_system;
 pub use crate::l_system::produce;
@@ -8,8 +9,7 @@ pub use crate::turtle::Turtle;
 
 pub fn render_turtle(draw: &Draw, path: &str) {
     let mut turtle = Turtle{
-        position: vec3(0.0, -512.0, 0.0),
-        orientation: vec3(0.0, 1.0, 0.0),
+        position: vec3(0.0, -512.0, 0.0).into(),
         thickness: 5.0,
         color: STEELBLUE,
         .. Turtle::default()
@@ -32,12 +32,12 @@ pub fn render_turtle(draw: &Draw, path: &str) {
             // [: push position and angle, turn left 45 degrees
             "[" => {
                 turtle.push();
-                turtle.turn(-PI/8.0);
+                turtle.yaw(Deg(-PI/8.0));
             }
             // ]: pop position and angle, turn right 45 degrees
             "]" => {
                 turtle.pop();
-                turtle.turn(PI/8.0);
+                turtle.yaw(Deg(PI/8.0));
             }
             _ => {
                 println!("unknown command")

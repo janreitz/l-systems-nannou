@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use nannou::prelude::*;
+use nannou::math::Deg;
 
 mod l_system;
 pub use crate::l_system::produce;
@@ -12,8 +13,7 @@ fn to_rad(deg: f32) -> f32 {
 
 pub fn render_turtle(draw: &Draw, path: &str) {
     let mut turtle = Turtle{
-        position: vec3(0.0, -512.0, 0.0),
-        orientation: vec3(0.0, 1.0, 0.0),
+        position: vec3(0.0, -512.0, 0.0).into(),
         thickness: 2.0,
         .. Turtle::default()
     };
@@ -28,11 +28,11 @@ pub fn render_turtle(draw: &Draw, path: &str) {
             }
             // − means "turn right 25°"
             "-" => {
-                turtle.turn(25.0);
+                turtle.yaw(Deg(25.0));
             }
             // + means "turn left 25°"
             "+" => {
-                turtle.turn(-25.0);
+                turtle.yaw(Deg(-25.0));
             }
             // X does not correspond to any drawing action and is used to control the evolution of the curve. 
             "X" => {}

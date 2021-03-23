@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use nannou::prelude::*;
+use nannou::math::Deg;
 
 mod l_system;
 pub use crate::l_system::produce_stochastic;
@@ -11,8 +12,7 @@ pub use crate::capture::capture_path_frame_count;
 
 pub fn render_turtle(draw: &Draw, path: &str) {
     let mut turtle = Turtle{
-        position: vec3(0.0, -512.0, 0.0),
-        orientation: vec3(0.0, 1.0, 0.0),
+        position: vec3(0.0, -512.0, 0.0).into(),
         thickness: 5.0,
         color: FORESTGREEN,
         stack: Vec::new(),
@@ -27,10 +27,10 @@ pub fn render_turtle(draw: &Draw, path: &str) {
                 turtle.forward(draw, 50.0 * scaling);
             }
             "b" => {
-                turtle.turn(deg_to_rad(25.0));
+                turtle.yaw(Deg(25.0));
             }
             "c" => {
-                turtle.turn(deg_to_rad(-25.0));
+                turtle.yaw(Deg(-25.0));
             }
             "d" => {
                 // do nothing
