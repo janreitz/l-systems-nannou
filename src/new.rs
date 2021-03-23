@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use nannou::prelude::*;
 use nannou::ui::prelude::*;
 
@@ -109,11 +108,13 @@ struct Model {
     ids: Ids,
     turn_angle: f32,
     production: String,
+    rotation: f32,
 }
 
 widget_ids! {
     struct Ids {
         turn_angle,
+        rotation,
     }
 }
 
@@ -123,13 +124,9 @@ fn model(app: &App) -> Model {
 
     // Create the UI.
     let mut ui = app.new_ui().build().unwrap();
-
     // Generate some ids for our widgets.
     let ids = Ids::new(ui.widget_id_generator());
 
-    // Init our variables
-    let turn_angle = 30.0;
-    
     // 3d tree
     // let axiom = String::from("FFFA");
     // let mut production_rules = HashMap::new();
@@ -145,31 +142,43 @@ fn model(app: &App) -> Model {
     Model {
         ui,
         ids,
-        turn_angle,
+        turn_angle: l_system.angle,
         production,
+        rotation: 0.0,
     }
 }
 
 fn update(_app: &App, model: &mut Model, _update: Update) {
     let ui = &mut model.ui.set_widgets();
 
-    fn slider(val: f32, min: f32, max: f32) -> widget::Slider<'static, f32> {
-        widget::Slider::new(val, min, max)
-            .w_h(200.0, 30.0)
-            .label_font_size(15)
-            .rgb(0.3, 0.3, 0.3)
-            .label_rgb(1.0, 1.0, 1.0)
-            .border(0.0)
-    }
-
-    for value in slider(model.turn_angle, 0.0, 90.0)
+    let angle_slider = widget::Slider::new(model.turn_angle, 0.0, 90.0)
         .top_left_with_margin(20.0)
+        .w_h(200.0, 30.0)
         .label("Turn Angle")
-        .label_color(color::BLACK)
-        //.color(color::DARK_BLUE)
-        .set(model.ids.turn_angle, ui)
+        .label_font_size(15)
+        .label_rgb(1.0, 1.0, 1.0)
+        .rgb(0.3, 0.3, 0.3)
+        .border(0.0)    
+        .set(model.ids.turn_angle, ui);
+
+    let rotation_slider = widget::Slider::new(0.0, 0.0, 360.0)
+        .align_left_of(model.ids.turn_angle)
+        .w_h(200.0, 30.0)
+        .label("Rotation")
+        .label_font_size(15)
+        .label_rgb(1.0, 1.0, 1.0)
+        .rgb(0.3, 0.3, 0.3)
+        .border(0.0)    
+        .set(model.ids.rotation, ui);
+
+    for value in angle_slider
     {
         model.turn_angle = value;
+    }
+
+    for value in rotation_slider
+    {
+        model.rotation = value;
     }
 }
 
@@ -181,7 +190,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
     let turtle = Turtle{
         position: vec3(
             app.window_rect().mid_bottom().x, 
-            app.window_rect().mid_right().y,
+            app.window_rect().bottom(),
             0.0),
         orientation: vec3(0.0, 1.0, 0.0),
         thickness: 2.0,
