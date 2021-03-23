@@ -1,10 +1,12 @@
-use nannou::prelude::*;
+use nannou::{prelude::*, ui::widget::Slider};
 use nannou::ui::prelude::*;
 
 mod l_system;
-pub use crate::l_system::*;
 mod turtle;
-pub use crate::turtle::Turtle;
+mod capture;
+use crate::l_system::*;
+use crate::turtle::Turtle;
+use crate::capture::captured_frame_path;
 
 pub fn render_turtle(draw: &Draw, path: &str, mut turtle: Turtle) {
     let scaling = 1.0;
@@ -109,12 +111,14 @@ struct Model {
     turn_angle: f32,
     production: String,
     rotation: f32,
+    capture_image: bool,
 }
 
 widget_ids! {
     struct Ids {
         turn_angle,
         rotation,
+        capture_image,
     }
 }
 
@@ -145,31 +149,46 @@ fn model(app: &App) -> Model {
         turn_angle: l_system.angle,
         production,
         rotation: 0.0,
+        capture_image: false,
     }
 }
 
 fn update(_app: &App, model: &mut Model, _update: Update) {
     let ui = &mut model.ui.set_widgets();
 
-    let angle_slider = widget::Slider::new(model.turn_angle, 0.0, 90.0)
+    model.capture_image = false;
+
+    fn slider(value: f32, min: f32, max: f32) -> Slider<'static, f32> {
+        widget::Slider::new(value, min, max)
+            .w_h(200.0, 30.0)
+            .label_font_size(15)
+            .label_rgb(1.0, 1.0, 1.0)
+            .rgb(0.3, 0.3, 0.3)
+            .border(0.0)   
+    }
+
+    let angle_slider = slider(model.turn_angle, 0.0, 90.0)
         .top_left_with_margin(20.0)
-        .w_h(200.0, 30.0)
         .label("Turn Angle")
-        .label_font_size(15)
-        .label_rgb(1.0, 1.0, 1.0)
-        .rgb(0.3, 0.3, 0.3)
-        .border(0.0)    
         .set(model.ids.turn_angle, ui);
 
-    let rotation_slider = widget::Slider::new(0.0, 0.0, 360.0)
-        .align_left_of(model.ids.turn_angle)
-        .w_h(200.0, 30.0)
+    let rotation_slider = slider(0.0, 0.0, 360.0)
+        .down(10.0)
         .label("Rotation")
-        .label_font_size(15)
-        .label_rgb(1.0, 1.0, 1.0)
-        .rgb(0.3, 0.3, 0.3)
-        .border(0.0)    
         .set(model.ids.rotation, ui);
+
+    for _click in widget::Button::new()
+        .down(10.0)
+        .w_h(200.0, 30.0)
+        .label("Export")
+        .label_font_size(15)
+        .rgb(0.3, 0.3, 0.3)
+        .label_rgb(1.0, 1.0, 1.0)
+        .border(0.0)
+        .set(model.ids.capture_image, ui)
+    {
+        model.capture_image = true;
+    }
 
     for value in angle_slider
     {
@@ -203,6 +222,12 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
     render_turtle(&draw, &model.production, turtle);
     draw.to_frame(app, &frame).unwrap();
+    
+    if model.capture_image {
+        let file_path = captured_frame_path(app, &frame);
+        app.main_window().capture_frame(file_path);
+    }
+    
     model.ui.draw_to_frame(app, &frame).unwrap();
 }
 
