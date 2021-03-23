@@ -3,7 +3,7 @@ use nannou::prelude::*;
 use nannou::ui::prelude::*;
 
 mod l_system;
-pub use crate::l_system::produce;
+pub use crate::l_system::*;
 mod turtle;
 pub use crate::turtle::Turtle;
 
@@ -86,6 +86,10 @@ pub fn render_turtle(draw: &Draw, path: &str, mut turtle: Turtle) {
             "/" => {
                 turtle.turn_y(turtle.turn_angle);
             }
+            // Scale linelength
+            "°" => {
+                //turtle.line_length *= 0.9;
+            }
             // X does not correspond to any drawing action and is used to control the evolution of the curve. 
             "X" => {}
             // Y does not correspond to any drawing action and is used to control the evolution of the curve. 
@@ -104,7 +108,6 @@ struct Model {
     ui: Ui,
     ids: Ids,
     turn_angle: f32,
-    axiom: String,
     production: String,
 }
 
@@ -125,59 +128,24 @@ fn model(app: &App) -> Model {
     let ids = Ids::new(ui.widget_id_generator());
 
     // Init our variables
-    let turn_angle = 1.0;
-
-    // Fractal Plant 
-    // Angle 25
-    // Start 
-            // app.window_rect().mid_bottom().x, 
-            // app.window_rect().bottom()),
-    // let axiom = String::from("X");
-    // let mut production_rules = HashMap::new();
-    // production_rules.insert(String::from("X"), String::from("F+[[X]-X]-F[-FX]+X"));
-    // production_rules.insert(String::from("F"), String::from("FF"));
-
-    // Square (Angle 90)
-    // let axiom = String::from("F+XF+F+XF");
-    // let mut production_rules = HashMap::new();
-    // production_rules.insert(String::from("X"), String::from("XF-F+F-XF+F+XF-F+F-X"));
-    
-    // Hilbert (Angle 90)
-    // let axiom = String::from("X");
-    // let mut production_rules = HashMap::new();
-    // production_rules.insert(String::from("X"), String::from("-YF+XFX+FY-"));
-    // production_rules.insert(String::from("Y"), String::from("+XF-YFY-FX+"));
-    
-    // Pentaplexity (Angle 36)
-    // let axiom = String::from("F++F++F++F++F");
-    // let mut production_rules = HashMap::new();
-    // production_rules.insert(String::from("F"), String::from("F++F++F|F-F++F"));
-    
-    // Hexagonal Gosper
-    // axiom = XF
-    // X -> X+YF++YF-FX--FXFX-YF+
-    // Y -> -FX+YFYF++YF+FX--FX-Y
-    // angle = 60
-    // let axiom = String::from("XF");
-    // let mut production_rules = HashMap::new();
-    // production_rules.insert(String::from("X"), String::from("X+YF++YF-FX--FXFX-YF+"));
-    // production_rules.insert(String::from("Y"), String::from("-FX+YFYF++YF+FX--FX-Y"));
+    let turn_angle = 30.0;
     
     // 3d tree
-    let axiom = String::from("FFFA");
-    let mut production_rules = HashMap::new();
-    production_rules.insert(String::from("A"), String::from("[^FFFA]////[^FFFA]////[^FFFA]"));
+    // let axiom = String::from("FFFA");
+    // let mut production_rules = HashMap::new();
+    // production_rules.insert(String::from("A"), String::from("°[^/FFFA]////[^/FFFA]////[^/FFFA]"));
 
-    let mut production = axiom.clone();
+    let l_system = fractal_plant();
+
+    let mut production = l_system.axiom.clone();
     for _ in 0..6 {
-        production = produce(&production, &production_rules)
+        production = produce(&production, &l_system.production_rules)
     }
 
     Model {
         ui,
         ids,
         turn_angle,
-        axiom,
         production,
     }
 }

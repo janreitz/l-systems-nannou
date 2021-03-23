@@ -51,3 +51,77 @@ pub fn produce_stochastic(axiom: &str, rules: &HashMap<String, Vec<(f32, String)
     };
     s
 }
+
+pub struct LSystem {
+    pub axiom: String,
+    pub production_rules: HashMap<String, String>,
+    pub angle: f32,
+}
+
+pub fn fractal_plant() -> LSystem {
+    let mut production_rules = HashMap::new();
+    production_rules.insert(String::from("X"), String::from("F+[[X]-X]-F[-FX]+X"));
+    production_rules.insert(String::from("F"), String::from("FF"));
+    LSystem {
+        axiom: String::from("X"),
+        production_rules,
+        angle: 25.0,
+    }
+}
+
+pub fn fractal_tree() -> LSystem {
+    let mut production_rules = HashMap::new();
+    production_rules.insert(String::from("0"), String::from("1[0]0"));
+    production_rules.insert(String::from("1"), String::from("11"));
+    LSystem {
+        axiom: String::from("0"),
+        production_rules,
+        angle: 25.0,
+    }
+}
+
+pub fn square() -> LSystem {
+    let mut production_rules = HashMap::new();
+    production_rules.insert(String::from("X"), String::from("XF-F+F-XF+F+XF-F+F-X"));
+    
+    LSystem {
+        axiom: String::from("F+XF+F+XF"),
+        production_rules,
+        angle: 90.0,
+    }
+}
+
+pub fn hilbert() -> LSystem {
+    let mut production_rules = HashMap::new();
+    production_rules.insert(String::from("X"), String::from("-YF+XFX+FY-"));
+    production_rules.insert(String::from("Y"), String::from("+XF-YFY-FX+"));
+    
+    LSystem {
+        axiom: String::from("X"),
+        production_rules,
+        angle: 90.0,
+    }
+}
+
+pub fn pentaplexity() -> LSystem {
+    let mut production_rules = HashMap::new();
+    production_rules.insert(String::from("F"), String::from("F++F++F|F-F++F"));
+    
+    LSystem {
+        axiom: String::from("F++F++F++F++F"),
+        production_rules,
+        angle: 36.0,
+    }
+}
+
+pub fn hexagonal_gosper() -> LSystem {
+    let mut production_rules = HashMap::new();
+    production_rules.insert(String::from("X"), String::from("X+YF++YF-FX--FXFX-YF+"));
+    production_rules.insert(String::from("Y"), String::from("-FX+YFYF++YF+FX--FX-Y"));
+
+    LSystem {
+        axiom: String::from("XF"),
+        production_rules,
+        angle: 60.0,
+    }
+}
