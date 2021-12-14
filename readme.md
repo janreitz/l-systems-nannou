@@ -1,3 +1,3 @@
-I'm trying a bit of rust and the creative coding framework [nannou](https://nannou.cc/). 
+Simple L-System implementation using the creative coding framework [nannou](https://nannou.cc/).
 
-This is a port of my [super simple generative trees](https://janreitz.com/projects/growing_trees.html), originally written with Python/Processing.
+Check out the related [post on my website](https://janreitz.com/projects/l_systems.html)  
